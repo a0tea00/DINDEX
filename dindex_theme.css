@@ -1,0 +1,39 @@
+body{
+    color:#fff;
+    background-color:#000;
+    background-image: url(n2of110uyio9.jpg)
+}
+.btn, .btn > h1,.menu > ul > li > span, .menu .content button, .menu .content input{
+    color:#c41919 !important;
+    border-color:#c41919 !important;
+}
+
+.panel-bar > h1{
+font-style: italic;
+color: #fff;   
+}
+.btn > h1{
+font-size: 50px;
+}
+
+.day-cell:nth-child(n){
+color:#e2e2e2;
+background:rgba(83, 83, 83, 0.88);
+}
+
+.day-cell.today-cell{
+background:rgba(196, 25, 25, 0.80);
+    color:#fff;
+}
+.panel-bar:nth-child(3) .day-cell{
+    color:#fff;
+    background: #c41919;
+}
+.box-date-short{
+	font-size:20px;
+	background:#333;
+	padding:2px;
+}
+.box-rank-index, .box-rank-label, .box-label{
+	text-indent: 5px;
+}

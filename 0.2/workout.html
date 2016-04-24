@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<script src="dindex.js"></script>
+<link rel="stylesheet" type="text/css" href="normal.css">
+<link rel="stylesheet" type="text/css" href="dindex.css">
+<link rel="stylesheet" type="text/css" href="dindex_theme.css">
+</head>
+<body>
+<div id="dindex" class="stage">
+	<div class="panel-bar">
+		<h1>Workout Schedule <small id="version">Dindex v0.1.2</small></h1>
+	</div>
+	<div id="menu" class="menu">
+		<ul>
+			<li class="item" id="toUrl"><span>import/export</span></li>
+		</ul>
+		<div class="content" id="toUrlContent" hidden="hidden">
+				<div id="link"></div>
+				<input id="pattern"></input>
+				<input id="startDate_M" placeholder="Month"></input>
+				<input id="startDate_D" placeholder="Day"></input>
+				<input id="startDate_Y" placeholder="Year"></input>
+				<button id="loadUrlBtn">Okay</button>
+		</div>
+	</div>
+	<div class="panel-bar">
+		<div class="day-cell"><h1>Sun</h1></div>
+		<div class="day-cell"><h1>Mon</h1></div>
+		<div class="day-cell"><h1>Tue</h1></div>
+		<div class="day-cell"><h1>Wed</h1></div>
+		<div class="day-cell"><h1>Thu</h1></div>
+		<div class="day-cell"><h1>Fri</h1></div>
+		<div class="day-cell"><h1>Sat</h1></div>
+	</div>
+	
+</div>
+<div id="dindex" class="stage">
+	<div id="OMW" class="panel-bar btn">
+		<h1>+</h1>
+	</div>
+    <div class="panel-bar">
+            <p>© 2015 Trey Huang. Workout Plan Page (v1.5), powered by DIndex.</p>
+	</div>
+</div>
+
+<script>
+    document.getElementById("version").innerHTML = "Dindex v"+DIndex.VERSION;
+    
+	var p = document.getElementById("pattern");
+
+	var month = document.getElementById("startDate_M");
+	var day = document.getElementById("startDate_D");
+	var year = document.getElementById("startDate_Y");
+	var l = document.getElementById("link");
+
+	var loadUrlBtn = document.getElementById("loadUrlBtn");
+	
+	var url = window.location.toString().split('?');
+	if (url.length == 2){
+		m2 = url[1].split("-");
+
+		pArray = (parseInt(m2[0], 16).toString(2)).split("");
+
+		p.value = pArray.toString();
+		var d = new Date(parseInt(m2[1], 16));
+
+		month.value = d.getMonth()+1;
+		day.value = d.getDate();
+		year.value = d.getYear() +1900;
+		DIndex.PATTERN = pArray;
+		DIndex.START_DATE = d
+	}
+	else{
+		p.value = DIndex.PATTERN.toString();
+		month.value = DIndex.START_DATE.getMonth()+1;
+		day.value = DIndex.START_DATE.getDate();
+		year.value = DIndex.START_DATE.getYear() +1900;
+	}
+	
+	
+	DIndex.InitMeta();
+	DIndex.PrePopulate();
+
+	var weekCount =0;	
+	var dayCount = DIndex.Meta.FirstPointer ;
+	
+	function showWeek(){
+		var panelBar = document.createElement("div");
+		panelBar.setAttribute("class", "panel-bar");
+		panelBar.id = "w_" +  weekCount;
+		
+		for (var i =0; i < DIndex.WEEKDAYS; i++){
+			var dayCell = document.createElement("div");
+			dayCell.setAttribute("class", "day-cell");
+			
+			dayCell.id= "d_" + (dayCount++);
+			
+			var dayLabel = "Day "+ dayCount + ". ";
+			
+			if (DIndex.WeekRows[weekCount][i] > 0){
+				
+				if( dayCount == (DIndex.Meta.TodayPointer+1)){
+					dayCell.innerHTML = dayLabel + "<h3>Workout #"+(DIndex.RankOfToday()+1)+"<h3></h> <h1>Rotine "+DIndex.WeekRows[weekCount][i] +"</h1>";
+				}else{
+					dayCell.innerHTML = dayLabel + "Workout! <h1>"+DIndex.WeekRows[weekCount][i] +"</h1>";
+				}
+					
+				
+				
+			}else{
+				dayCell.innerHTML =dayLabel + " Rest... ";
+			}
+			
+			panelBar.appendChild(dayCell);
+			
+		}
+		
+		//dayCount+= DIndex.WEEKDAYS;
+		document.getElementById("dindex").appendChild(panelBar);
+		
+	}
+	
+	
+	function oneMoreWeek(){
+		DIndex.WeekRows[weekCount] = DIndex.NextWeek();	
+		console.log(weekCount);
+		showWeek();
+		weekCount ++;
+	}
+	
+	//start
+	
+	for(; weekCount < DIndex.WeekRows.length; weekCount ++){
+		showWeek(weekCount, dayCount);
+		
+	}
+	
+	var todayCellId = "d_" + DIndex.Meta.TodayPointer;
+    var today = document.createElement("h3");
+	
+    today.innerHTML =DIndex.Meta.CurrentDate.toLocaleDateString();
+	document.getElementById(todayCellId).setAttribute("class", "day-cell today-cell");
+	
+    document.getElementById(todayCellId).appendChild(today);
+	
+	document.getElementById("OMW").addEventListener("click",oneMoreWeek );
+	
+	function toUrl(p, s){
+	var pstr ="";
+	var sstr = s.getTime().toString(16);
+	
+	for (var i in p){
+		pstr += p[i];
+	}
+	
+	pstr = (parseInt(pstr, 2)).toString(16);
+	
+	str = pstr + "-" + sstr;
+	return str; 
+	}
+	
+	var m1   = (function(p, s){
+		return toUrl(p, s);
+	}(DIndex.PATTERN, DIndex.START_DATE ));
+
+	
+
+	l.innerHTML = window.location.toString().split('?')[0] + "?" + m1;
+
+	loadUrlBtn.addEventListener("click",function(){
+		var newDate = new Date(parseInt(year.value,10),parseInt((month.value - 1),10), parseInt(day.value,10));
+		var newM = toUrl(p.value.split(","), newDate)
+		window.location.href = window.location.toString().split('?')[0] + "?" + newM;
+	});
+	
+	document.getElementById("toUrl").addEventListener("click",function(){
+		var content = document.getElementById("toUrlContent");
+		if (content.getAttribute("hidden") == "hidden"){
+			content.removeAttribute("hidden");
+		}else{
+			content.setAttribute("hidden","hidden");
+		}
+	});
+	
+</script>
+
+</body></html>
