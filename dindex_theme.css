@@ -1,7 +1,10 @@
 body{
     color:#fff;
     background-color:#000;
-    background-image: url(n2of110uyio9.jpg)
+    background-image: url(wobg.jpg);
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: center;
 }
 .btn, .btn > h1,.menu > ul > li > span, .menu .content button, .menu .content input{
     color:#c41919 !important;
