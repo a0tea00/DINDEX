@@ -20,7 +20,7 @@ DIndex.PATTERN =  [1,0,1,0,1,0,0];
 DIndex.WEEK_ROW_SHOWN = 4;
 DIndex.WEEK_ROW_CURRENT = 1; //start from 0
 DIndex.WEEKDAYS = 7; //7 day starts from 1, sunday is 0
-DIndex.VERSION = "0.3.0";
+DIndex.VERSION = "0.3.1";
 
 DIndex.Meta = {};
 DIndex.WeekRows = [];
@@ -40,8 +40,10 @@ DIndex.InitMeta= function (){
 	this.Meta.IndexRow = [];
 	this.Meta.SpanLength  = this.PATTERN.length; 
 	this.Meta.TotalLength = this.Meta.SpanLength*this.INDEX_RANGE;
-	
 	this.Meta.CurrentDate = new Date();
+	//this.Meta.CurrentDate = new Date(Date.UTC(this.Meta.CurrentDate.getFullYear(), this.Meta.CurrentDate.getMonth(), this.Meta.CurrentDate.getDate(), 0, 0, 0));
+	
+	this.START_DATE = new Date(Date.UTC(this.START_DATE.getFullYear(), this.START_DATE.getMonth(), this.START_DATE.getDate(), 0, 0, 0));
 	
 	this.Meta.NoneEmptySpanDays = 0;
 	for (var i in this.PATTERN){
@@ -85,7 +87,7 @@ DIndex.InitMeta= function (){
 	}
      
 	//this.Meta.TodayPointer = this.START_INDEX * this.Meta.SpanLength - this.GAP_LENGTH - 1;
-	this.Meta.TodayPointer += this.Meta.DayOffset;
+	this.Meta.TodayPointer += this.Meta.DayOffset-1;
 		
     //console.log( this.Meta.TodayPointer);
 	this.Meta.FirstPointer = this.Meta.TodayPointer - this.Meta.CurrentDate.getDay() - this.WEEKDAYS*this.WEEK_ROW_CURRENT; //start from Sunday index(0)
@@ -95,7 +97,7 @@ DIndex.InitMeta= function (){
 	
   //console.log( this.Meta.TodayPointer);
    //console.log(this.Meta.FirstPointer);
-    console.log(this.Meta.IndexRow);
+    console.log(this.Meta.FirstPointer);
 	
 }
 
@@ -112,7 +114,8 @@ DIndex.NextWeek = function(){
 			unsign = this.Meta.TotalLength + unsign;
 		}
 		*/
-		var newDate = new Date(DIndex.START_DATE.getTime()+((i+this.Meta.CurrentPointer)*24*60*60*1000));
+		
+		var newDate = new Date(DIndex.START_DATE.getTime()+((i+this.Meta.CurrentPointer+1)*24*60*60*1000));
 		if (this.Meta.IndexRow[unsign] > 0){
 			this.Meta.rank_label += 1;
 		}
